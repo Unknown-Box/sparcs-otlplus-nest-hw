@@ -1,0 +1,123 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  uuid String @unique @default(uuid())
+
+  firstName       String
+  lastName        String
+  // profileImageURL String
+
+  email    String
+  password String
+
+  post Post[]
+  chat Chat[]
+  role Role[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  isExpired Boolean @default(false)
+}
+
+model Space {
+  uuid String @unique @default(uuid())
+
+  post     Post[]
+  role     Role[]
+  joinCode JoinCode[]
+
+  name         String
+  // logoImageUrl String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  isExpired Boolean @default(false)
+}
+
+model Post {
+  uuid String @unique @default(uuid())
+
+  space   Space @relation(fields: [spaceId], references: [uuid])
+  spaceId String
+
+  author   User @relation(fields: [authorId], references: [uuid])
+  authorId String
+
+  title    String
+  category String
+  content  String @db.Text
+
+  isAnonymous Boolean
+
+  chat Chat[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  isExpired Boolean @default(false)
+}
+
+model Chat {
+  uuid String @unique @default(uuid())
+
+  post   Post @relation(fields: [postId], references: [uuid])
+  postId String
+
+  author   User @relation(fields: [authorId], references: [uuid])
+  authorId String
+
+  content String @db.Text
+
+  replyId     Int
+  isAnonymous Boolean
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  isExpired Boolean @default(false)
+}
+
+model Role {
+  uuid String @unique @default(uuid())
+
+  user   User @relation(fields: [userId], references: [uuid])
+  userId String
+
+  space   Space @relation(fields: [spaceId], references: [uuid])
+  spaceId String
+
+  role    String
+  isAdmin Boolean
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  isExpired Boolean @default(false)
+}
+
+model JoinCode {
+  uuid String @unique @default(uuid())
+
+  space   Space @relation(fields: [spaceId], references: [uuid])
+  spaceId String
+
+  type    String
+  content String @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  isExpired Boolean @default(false)
+}
