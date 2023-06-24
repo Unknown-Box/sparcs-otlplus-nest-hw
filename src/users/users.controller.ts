@@ -1,37 +1,16 @@
-import { Body, Catch, Controller, Delete, ExceptionFilter, FileTypeValidator, Get, Header, HttpStatus, MaxFileSizeValidator, NotFoundException, Param, ParseFilePipe, Post, Req, Res, UploadedFile, UseFilters, UseInterceptors, UsePipes, ValidationPipe } from "@nestjs/common";
-import { FileInterceptor, FileFieldsInterceptor } from "@nestjs/platform-express";
-import { CreateUserDTO, GetUserDTO } from "./users.dto";
-import { UserService } from "./users.service";
-import { Request, Response } from "express";
-import path from "path";
-import { diskStorage } from "multer";
-import { randomUUID } from "crypto";
+import { Body, Controller, Delete, Get, Param, Post } from "@nestjs/common";
 
 
 @Controller("users")
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor() {}
 
   @Post()
-  @Header("Content-Type", "application/json")
-  @UsePipes(
-    new ValidationPipe({
-      whitelist: true, 
-      transform: true, 
-      disableErrorMessages: false
-    })
-  )
-  async createUser(@Body() body: CreateUserDTO) {
-    return await this.userService.createUser(body);
-  }
+  async createUser(@Body() body: any) {}
 
-  @Get(":user_uuid")
-  async getUser(@Param("user_uuid") userUUID: string): Promise<GetUserDTO> {
-    return await this.userService.getUser(userUUID);
-  }
+  @Get(":userId")
+  async getUser(@Param("userId") userId: string) {}
 
-  @Delete(":user_uuid")
-  async deleteUser(@Param("user_uuid") userUUID: string) {
-    return await this.userService.deleteUser(userUUID);
-  }
+  @Delete(":userId")
+  async deleteUser(@Param("userId") userId: string) {}
 }
